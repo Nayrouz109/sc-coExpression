@@ -1,8 +1,6 @@
-# Network Rewiring
+# gene co-expression "network" Rewiring
 
-# title 
-
-# project purpose and goals 
+#### project purpose and goals 
 1- NW in Disease (AD and SZC)
 2- NW in Cell types ("normal" samples)
 
