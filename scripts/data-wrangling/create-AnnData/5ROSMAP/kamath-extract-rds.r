@@ -1,0 +1,47 @@
+
+#!~/anaconda3/bin/Rscript
+
+library(tidyverse)
+library(magrittr)
+library(dplyr)
+library(Matrix)
+library(Seurat)
+
+
+dir = "/cosmos/data/downloaded-data/AD-meta/Kamath-NPH/data/0-source/expr" 
+out = "/cosmos/data/downloaded-data/AD-meta/Kamath-NPH/data/0-source/expr/rds-comps/"
+files <- list.files(path = dir, pattern = "\\.rds$", full.names = TRUE) 
+
+for (file in files) {
+    print( paste("reading", basename(file))) 
+
+    data = readRDS(file) 
+    mtxExtracted = data@assays@data$counts
+    colnames(mtxExtracted)  <-  gsub("\\d+_\\d+_", "", colnames(mtxExtracted))
+
+    data@colData$patientID = data@colData$anno_batch
+    metaExtracted <- as.data.frame(data@colData) %>% 
+                dplyr::arrange(patientID) %>% mutate(patientID = factor(patientID))
+    
+    if (all( rownames(metaExtracted) %in% colnames(mtxExtracted))) {
+      mtxExtracted <- mtxExtracted[, as.character(rownames(metaExtracted))]
+    } else {
+      stop("Mismatch between patientIDs in metaExtracted and column names in mtxExtracted")
+    }
+
+
+    name0  = gsub("_.*" , "", basename(file)) 
+    name   = paste0(name0, "_Kamath-NPH-2023") 
+
+    if (all(rownames(metaExtracted) == colnames(mtxExtracted))){
+        print( paste("saving", basename(file))) 
+        Matrix::writeMM(mtxExtracted, paste0(out, name, "_counts.mtx"))
+        write.csv(rownames(mtxExtracted), paste0(out, name, "_genes.csv"), row.names = FALSE)
+        write.csv(colnames(mtxExtracted), paste0(out, name, "_cell_ids.csv"), row.names = FALSE)
+        write.csv(metaExtracted, paste0(out, name, "_meta_data.csv"), row.names = TRUE)
+    }
+}
+
+
+# run like this 
+# /space/opt/bin/Rscript extract-rds-kamath.r

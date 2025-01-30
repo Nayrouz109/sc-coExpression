@@ -1,0 +1,15 @@
+
+
+
+#documentation ProcessPoolExecutor
+https://docs.python.org/3.13/library/concurrent.futures.html#module-concurrent.futures
+
+#documentation Multindexing 
+https://pandas.pydata.org/docs/user_guide/advanced.html
+
+
+#StackOverFlow  How to share data between Python processes?
+https://stackoverflow.com/questions/35157367/how-to-share-data-between-python-processes
+
+
+ 

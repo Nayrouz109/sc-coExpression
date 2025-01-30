@@ -1,0 +1,72 @@
+
+### sanity check to make sure total number of cell IDs in the big cell meta-data file matches the newly wrangled files ===========================================
+dim(cells_meta_all)
+1228450      25
+length(unique(cells_meta_all$PREFIX))
+87
+length(unique(cells_meta_all$CELL_BARCODE))
+1048695
+length(unique(cells_meta_all$barcodes))
+1,228,450 
+1,217,965 # reported in the paper 
+
+## newly wrangled with pattern BA46_(date)_rxn[0-9]+\\.h5" = 80 files 
+#  1. Cell Type: Astrocyte 
+Expr dimensions: 39735 177279 
+
+# 2. Cell Type: Endothelia 
+Expr dimensions: 39735 17762 
+
+# 3. Cell Type: GABAergic 
+Expr dimensions: 39735 224485 
+
+# 4. Cell Type: Microglia 
+Expr dimensions: 39735 43322 
+
+# 5. Cell Type: Oligodendrocyte 
+Expr dimensions: 39735 130205 
+
+# 6. Cell Type: Polydendrocyte 
+Expr dimensions: 39735 63607 
+
+
+## newly wrangled with pattern "*MyelinRemoved.h5" = 7 files 
+# 1. Cell Type: Astrocyte 
+Expr dimensions: 37623 11006 
+
+# 2. Cell Type: Endothelia 
+Expr dimensions: 37623 949 
+
+# 3. Cell Type: GABAergic 
+Expr dimensions: 37623 13826 
+
+# 4. Cell Type: Glutamatergic 
+Expr dimensions: 37623 27102 
+
+# 5. Cell Type: Microglia 
+Expr dimensions: 37623 2948 
+
+# 6. Cell Type: Oligodendrocyte 
+Expr dimensions: 37623 11435 
+
+# 7. Cell Type: Polydendrocyte 
+Expr dimensions: 37623 3857 
+
+# 177279 + 63607 + 130205 + 43322 + 224485 + 17762 + 11006 + 949 + 13826 + 27102 + 2948 + 11435 + 3857   = 727,783 + 500,667
+
+
+
+### 191 figure out which patient IDs were removed 
+### single cells ID not consistent with the paper  
+### create pseuco-bulk 
+### batch correction in the paper 
+### PDF supplemenatry fig 2 
+
+
+### age distribution for the 3 cohorts 
+
+
+
+
+
+
