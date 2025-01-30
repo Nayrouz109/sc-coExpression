@@ -1,6 +1,6 @@
 # gene co-expression "network" Rewiring
 
-#### project purpose and goals 
+### project purpose and goals 
 1- NW in Disease (AD and SZC)
 2- NW in Cell types ("normal" samples)
 
@@ -13,12 +13,12 @@ The project does the following:
 4- pipeline to compute differential gene expression 
 
 ### where to find data and scripts 
-# data:   /cosmos/data/project-data/NW-rewiring/data
-# result: /cosmos/data/project-data/NW-rewiring/coExpr
-# script: /home/nelazzabi/rewiring/scripts
+**data**:   /cosmos/data/project-data/NW-rewiring/data
+**result**: /cosmos/data/project-data/NW-rewiring/coExpr
+**script**: /home/nelazzabi/rewiring/scripts
 
 
-# Installation 
+### Installation 
 1. clone the repo 
 git clone https://github.com/yourusername/bioinformatics-project.git
 2. Set up the Conda environment:
@@ -34,12 +34,12 @@ python run_compute_cor-disease.py \
 4. 
 
 
-# Project structure 
+### Project structure 
 - data\
 - scripts\
 
 
-# Pipeline notes 
+### Pipeline notes 
 the output from the parallel computation 
             subset_results = Parallel(n_jobs=max_workers)(
                 delayed(process_patient)(patient_id, subset, min_cells_threshold, correlation_type, replace_nans)
@@ -56,6 +56,6 @@ subset_results[0][0] # Access the identifier ('82317494')
 subset_results[0][1] # Access the dictionary for the patient
 subset_results[0][1]["rank_normalized_matrix"] 
 
-# Contact 
+### Contact 
 for questions, contact nayrouz@student.ubc.ca
 
