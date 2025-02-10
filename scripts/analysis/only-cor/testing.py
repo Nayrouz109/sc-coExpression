@@ -134,5 +134,7 @@ aggCT = ad.read_h5ad("/cosmos/data/project-data/NW-rewiring/coExpr/disease/agg-m
 input_dir = Path("/cosmos/data/project-data/NW-rewiring/data/2.prcsd-slcGenes-cpm/intrsct-lessStringent-diag-disease")
 
 
+files = []
 for file_path in input_dir.glob("Inh*.h5ad"):
     print(file_path) 
+    files += file_path
