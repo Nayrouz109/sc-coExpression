@@ -1,3 +1,4 @@
 /data
 *.ipynb_checkpoints
 /scripts/analysis/testing
+/scripts/functions/topCoExpr/scratch
