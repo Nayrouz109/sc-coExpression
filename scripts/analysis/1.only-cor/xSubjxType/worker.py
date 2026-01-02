@@ -1,0 +1,49 @@
+#!/home/nelazzabi/anaconda3/envs/homl3/bin/python
+import sys
+import argparse
+import scanpy as sc
+import gc
+from pathlib import Path
+
+sys.path.append('/home/nelazzabi/rewiring/scripts/functions/compute-cor')
+#from corOnly_parallelV6_disease_xSubjectxType import compute_gene_correlation
+from corOnly_parallelV6_disease_xSubjxTypeV2 import compute_gene_correlation #Sep 30th, 2025 
+
+def main():
+    parser = argparse.ArgumentParser(description="Compute gene correlation for a single file and category.")
+    parser.add_argument("--file_list", type=str, nargs='+', required=True,help="Input .h5ad files (space-separated list).")
+    parser.add_argument("--file_path", type=str, required=True, help="new file path.")
+    parser.add_argument("--output_dir", type=str, required=True, help="Directory to save results.")
+    parser.add_argument("--category", type=str, default=None, help="Disease category (or 'ALL' for all samples).")
+    parser.add_argument("--correlation_type", type=str, default="pearson", choices=["pearson", "spearman"], help="Type of correlation.")
+    parser.add_argument("--replace_nans", action='store_true', help="Replace NaNs with median.")
+    parser.add_argument("--xType", action='store_true', help="If set, compute correlation across all patients and cell types.")
+    parser.add_argument("--PB", action='store_true', help="If set, generate PB matrices.") 
+    parser.add_argument("--min_cells_threshold", type=int, default=20, help="Minimum number of cells required per patient.")
+
+    args = parser.parse_args()
+    output_dir = Path(args.output_dir)
+
+    try:
+        compute_gene_correlation(
+            file_list=args.file_list , 
+            correlation_type=args.correlation_type,
+            replace_nans=args.replace_nans,
+            category=args.category,
+            min_cells_threshold=args.min_cells_threshold,
+            file_path=args.file_path,
+            output_dir=output_dir,
+            xType=args.xType, 
+            PB=args.PB
+        )
+    except Exception as e:
+        print(f"Error processing {args.file_list} for category {args.category}: {e}")
+
+    gc.collect()
+
+
+if __name__ == "__main__":
+    main()
+
+
+

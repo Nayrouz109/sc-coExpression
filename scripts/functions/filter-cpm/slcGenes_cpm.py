@@ -4,8 +4,10 @@ import scipy.sparse
 import anndata as ad
 import numpy as np
 import pandas as pd
+import gc 
 
-def slcGenes_and_cpm_adata(data, selected_genes, cpm_normalize=False, log_transform=False):
+def slcGenes_and_cpm_adata(#data, 
+                           file_path, selected_genes, cpm_normalize=False, log_transform=False):
     """
     1. Filters an AnnData object to include only selected genes, adds missing genes with zero expression, 
     2. and optionally applies CPM normalization and log transformation.
@@ -20,10 +22,12 @@ def slcGenes_and_cpm_adata(data, selected_genes, cpm_normalize=False, log_transf
         AnnData: Processed AnnData object with selected genes and valid cells.
     """
 
+    data_filtered = ad.read_h5ad(file_path)
+
     # Step 1: Filter the AnnData for the selected genes present in the data
-    current_genes = data.var_names.tolist()
+    current_genes = data_filtered.var_names.tolist()
     genes_to_keep = [gene for gene in selected_genes if gene in current_genes]
-    data_filtered = data[:, genes_to_keep]
+    data_filtered = data_filtered[:, genes_to_keep]
     #data_filtered.X = scipy.sparse.csr_matrix(data_filtered.X)  # Ensure sparse format
 
     # Step 2: Identify missing genes
@@ -31,12 +35,16 @@ def slcGenes_and_cpm_adata(data, selected_genes, cpm_normalize=False, log_transf
 
     # Step 3: Add missing genes with zero expression if any
     if missing_genes:
+        print("\nProcessing genes")
         missing_expr = scipy.sparse.csr_matrix((data_filtered.shape[0], len(missing_genes)))
-        combined_matrix = scipy.sparse.hstack([missing_expr, data_filtered.X]).tocsc()
 
         # Create a new AnnData object with the updated data
-        data_filtered_new = ad.AnnData(X=combined_matrix, obs=data_filtered.obs.copy())
+        data_filtered_new = ad.AnnData(X=scipy.sparse.hstack([missing_expr, data_filtered.X]).tocsc(), 
+                                       obs=data_filtered.obs.copy())
         data_filtered_new.var_names = missing_genes + data_filtered.var_names.tolist()
+        del data_filtered
+        gc.collect() 
+
     else:
         # No missing genes; return the filtered data directly
         data_filtered_new = data_filtered
@@ -46,6 +54,7 @@ def slcGenes_and_cpm_adata(data, selected_genes, cpm_normalize=False, log_transf
 
     # Step 4: CPM Normalization (optional)
     if cpm_normalize:
+        print("\nPerforming cpm normalization")
         X = data_filtered_new.X
         if isinstance(X, scipy.sparse.spmatrix):  # Sparse matrix handling
             total_counts = X.sum(axis=1).A1  # Sum of counts per cell
@@ -57,6 +66,7 @@ def slcGenes_and_cpm_adata(data, selected_genes, cpm_normalize=False, log_transf
 
     # Step 5: Log Transformation (optional)
     if log_transform:
+        print("\nPerforming log transformation") 
         X = data_filtered_new.X
         if scipy.sparse.issparse(X):  # Sparse matrix handling
             data_filtered_new.X = X.log1p()

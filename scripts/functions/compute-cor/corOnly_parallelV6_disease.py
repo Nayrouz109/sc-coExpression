@@ -89,7 +89,8 @@ def compute_gene_correlation(adata,
     total_patients = len(patient_ids)
     print(f"Total number of patients in {category}: {total_patients}")
 
-    aggregated_matrix = None
+    #aggregated_matrix = None
+    aggregated_matrix = np.zeros((subset.shape[1], subset.shape[1]))
     gene_names = None
     patient_count = 0
 
@@ -107,7 +108,8 @@ def compute_gene_correlation(adata,
             if aggregated_matrix is None:
                 aggregated_matrix = patient_matrix
             else:
-                aggregated_matrix += patient_matrix
+                #aggregated_matrix += patient_matrix
+                aggregated_matrix.__iadd__(patient_matrix)
 
             patient_count += 1
             print(f"Patient {patient_id} matrix aggregated.")
@@ -118,7 +120,7 @@ def compute_gene_correlation(adata,
     
     # Take the average after all patient matrices have been added
     if aggregated_matrix is not None and patient_count > 0:
-        aggregated_matrix = aggregated_matrix / patient_count
+        aggregated_matrix = rank(aggregated_matrix) 
 
     # Convert aggregated matrix to a DataFrame with gene names as row and column names
     if aggregated_matrix is not None and gene_names is not None:

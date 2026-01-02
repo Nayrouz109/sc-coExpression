@@ -7,6 +7,36 @@ from pathlib import Path
 import json
 import anndata as ad
 import pickle
+import os 
+
+def cor_mtx_to_edgeList(file_path, agg_adata, edge_list_dir2 ):
+
+    # 1.  data into an edgeList
+    df = pd.DataFrame(agg_adata.X, index=agg_adata.var_names, columns=agg_adata.var_names)
+    edge_list = df.stack().reset_index()
+    #edge_list.columns = ["source", "target", "weight"]
+    edge_list.columns = ["geneA", "geneB", "rank_norm_corr"]
+    
+    # Remove self-loops & multiIndex
+    edge_list_clean = edge_list[edge_list["geneA"] != edge_list["geneB"]]
+    edge_list_clean.set_index(['geneA', 'geneB'], inplace=True)
+    
+    # Count the number of targets per source
+    target_counts = edge_list_clean.groupby(level=0).size()
+    target_counts_df = target_counts.reset_index()
+    target_counts_df.columns = ["geneA", "num_targets"]
+    
+    # Sanity check
+    if (target_counts_df["num_targets"] == (agg_adata.shape[0]-1)).all():
+    #if (target_counts_df["num_targets"] == 10907).all():
+        print(f"Sanity check passed")
+        
+        # Save edge list 
+        output_file = edge_list_dir2 / f"{file_path.stem}_edgeList.csv"
+        edge_list_clean.to_csv(output_file)
+        print(f"Saved edge list to: {output_file}\n")
+    else:
+        print(f"Sanity check failed. Skipping file.\n")
 
 
 def correlation_matrix_to_edgelist(corr_matrix: pd.DataFrame):
@@ -38,16 +68,18 @@ def save_to_hdf5(cor, output_dir, file_path):
     """
     # Create required directories
     agg_mtx_dir = output_dir / "agg-mtx"
-    edge_list_dir = output_dir / "edge-list" 
+    edge_list_dir1 = output_dir / "edge-list" / "upTriang"
+    edge_list_dir2 = output_dir / "edge-list" / "all-matrix"
     summary_dir = output_dir / "cor-summary"
 
     agg_mtx_dir.mkdir(parents=True, exist_ok=True)
-    edge_list_dir.mkdir(parents=True, exist_ok=True)
+    edge_list_dir1.mkdir(parents=True, exist_ok=True)
+    edge_list_dir2.mkdir(parents=True, exist_ok=True)
     summary_dir.mkdir(parents=True, exist_ok=True)
 
     # File names
     agg_file = agg_mtx_dir / f"{file_path.stem}_corAggSparse.h5ad"
-    edge_list_file = edge_list_dir / f"{file_path.stem}_corEdgeLists.csv"
+    edge_list_file = edge_list_dir1 / f"{file_path.stem}_corEdgeLists.csv"
     #edge_list_file = edge_list_dir / f"{file_path.stem}_corEdgeLists.csv.gz"
     df_summary_file = summary_dir / f"{file_path.stem}_corSummary.csv"
 
@@ -66,10 +98,23 @@ def save_to_hdf5(cor, output_dir, file_path):
     edge_list.to_csv(edge_list_file)
     print("saved edge list")
 
+    #2.2 Save edgeList
+    cor_mtx_to_edgeList(file_path, agg_adata, edge_list_dir2)
+
     #3. Save data summary 
-    cor["data_summary"].to_csv(df_summary_file, index=False)
-    print(f"Saved data summary to {df_summary_file}")
+    #cor["data_summary"].to_csv(df_summary_file, index=False)
+    #print(f"Saved data summary to {df_summary_file}")
     
+
+
+
+
+
+
+
+
+
+
 
 
 

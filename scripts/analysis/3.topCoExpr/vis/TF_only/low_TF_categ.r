@@ -1,0 +1,90 @@
+
+
+
+### Bottom TFs categorization from 
+# TF_bottom_vis.r 
+
+genes = bottom_df <- low_tf_summary %>%
+  arrange(avg_Rank) %>%
+  head(500) %>%
+  mutate(group = "bottom") %>% 
+  filter(avg_Rank < 400)
+
+
+Zinc_finger_proteins = 
+c(
+  "ZNF384", "ZNF557", "ZNF514", "ZNF282", "ZNF333",
+  "ZNF778", "ZNF383", "ZNF561", "ZNF143", "ZNF317",
+  "ZNF805", "ZNF623", "ZNF583", "ZSCAN21", "ZSCAN12",
+  "ZBTB17", "ZBTB26", "ZNF140", "ZNF445", "ZNF250",
+  "ZNF594", "ZNF425", "ZNF596", "ZNF30",  "ZNF510",
+  "ZNF224", "ZNF567", "ZNF212", "ZNF329", "ZNF766",
+  "ZNF175", "ZNF169", "BLZF1",  "GMEB2",  "IKZF4",
+  "ZBTB26", "ZNF136", "ZNF354B", "ZNF195", "ZNF18",
+  "GMEB1",  "ZFP30",  "ZNF740", "ZNF264", "ZNF121",
+  "ZBTB11", "ZNF616", "ZNF624", "ZNF627", "ZNF891",
+  "ZNF26",  "HMGXB4",  "THAP4",  "THAP6",  "TADA2A",
+  "ZNF500", "ZKSCAN5", "ZNF16",  "ZFY",   "ZBTB24",
+  "ZNF431","ZNF606","ZNF761","ZNF480","ZFP62","ZNF429",
+  "ZNF394","ZNF335","ZNF512B","ZNF555","ZBED4","ZNF142",
+  "ZNF266","ZNF527","ZNF449","ZNF283","ZNF786","ZNF182",
+  "ZNF3",   "ZNF341","ZNF28", "ZNF268","ZNF44","ZNF234",
+  "ZBTB5",  "ZNF263","ZNF25", "ZFP82","ZSCAN32","ZNF2",
+  "ZNF260","ZNF823","ZNF562","ZNF337","ZNF180","ZNF84",
+  "ZNF202","ZNF701","ZNF398","IKZF5","MYNN","ZBTB49",
+  "ZNF45","ZNF615","ZNF444","ZBTB41","ZNF12","ZNF461",
+  "ZNF746","ZNF783","ZKSCAN8","ZNF324","ZNF569","ZNF200",
+  "ZNF573","ZSCAN29","ZSCAN9","ZNF566","ZBTB48","ZNF558",
+  "ZNFX1","ZNF35","ZNF134","ZNF699","ZNF568","ZNF821",
+  "ZNF79","ZFP14","ZNF326","ZNF484","ZNF76","ZNF43",
+  "ZNF211","ZNF74","ZNF267","ZNF646","ZNF226","ZNF34",
+  "ZNF41","ZNF354A","ZNF430","ZNF316","ZNF691","ZBTB40",
+  "NFXL1","ZNF674","ZNF611","ZNF791","ZNF345","ZNF507",
+  "ZNF582","ZNF347","ZNF777","ZNF66","ZNF197","ZBTB2",
+  "ZXDC","ZNF276","ZNF92","ZNF354C","ZNF765","ZNF629",
+  "ZNF613","ZFP3","ZNF682","ZNF141","ZNF771","ZNF75A",
+  "ZNF470","ZBTB37","ZNF14","ZNF776","ZNF570","ZNF85",
+  "ZNF274","ZNF460","ZNF737","ZNF227","ZNF70","ZNF528",
+  "ZNF440","ZNF587","ZNF232","ZNF692","ZNF133","ZNF614",
+  "ZNF251","ZNF280C","ZNF207","ZNF160","ZNF331","ZKSCAN7",
+  "ZNF595","ZNF793","ZNF696","ZNF675","ZNF225","ZNF397",
+  "ZNF800","ZNF714","ZNF322","ZNF540","ZNF738","ZNF563",
+  "ZNF107","ZNF138","ZNF684","ZNF101","ZNF441","ZNF814",
+  "ZNF473","ZNF420","ZNF490","ZNF785","ZNF790","ZNF32",
+  "ZFP1","ZBTB4","ZNF81","ZFP28","ZNF322","ZNF540","ZNF563",
+  "ZNF519","ZNF517","ZNF672","ZNF33B","ZBTB43","ZBTB10",
+  "ZNF131","ZNF639","ZNF24","ZNF512","ZNF362","ZNF571",
+  "ZNF90","ZNF529","ZNF552","ZNF787","ZNF630","ZNF236"
+)
+
+Phosphorylation_regulated_TFs = 
+c(
+  "ATF1",  "SP2",   "E2F6",  "CREB1", "CREM",  "ATF2",
+  "ATF6",  "ATF6B", "E2F4",  "SP1",   "ELK1",  "ELK4",
+  "STAT1", "STAT2","STAT5B","FOXP4","SRF","MEF2D",
+  "USF1",   "USF3",  "E4F1",   "HINFP","PLAGL2","MZF1",
+  "IRF3",   "SMAD5", "SMAD4","RELA","RELB?","SP3","TFDP1"
+)
+
+
+Epigenetic_regulators = 
+c(
+  "SETDB2","MBD2","PIAS2","PIAS4","ZBTB4","PIAS3","MBD1","SETDB1",
+  "MBD3","MTA1","MTA2","MECP2","HMG20A","YEATS4","ADNP2","BAZ2A"
+)
+
+Hormone_signal_responsive_TFs = 
+c(
+  "NR1H2","NR1H3","NR2C1","NR2C2","ARNT","NRL","TP53","NR2C2",
+  "GABPB1","CARF"  # less clear
+)
+
+other = 
+setdiff(
+  genes,
+  c(Zinc_finger_proteins,
+    Phosphorylation_regulated_TFs,
+    Epigenetic_regulators,
+    Hormone_signal_responsive_TFs)
+)
+

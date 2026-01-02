@@ -44,7 +44,10 @@ def create_pseudo_bulk(adata):
         columns=adata.var.index
     )
     # Metadata for pseudobulk samples
-    pseudobulk_meta = meta["patientID"].drop_duplicates().reset_index(drop=True)
+    # Select the required columns and drop duplicates
+    pseudobulk_meta = meta[['patientID', 'diagnosis', 'disease']].drop_duplicates().reset_index(drop=True)
+
+    # Ensure the index matches pseudobulk_expr
     pseudobulk_meta.index = pseudobulk_expr.index
 
     return pseudobulk_expr, pseudobulk_meta
