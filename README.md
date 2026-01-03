@@ -26,9 +26,7 @@ The project develops a framework for large-scale sc RNA-seq integration spanning
 
 This repository contains the **`/scripts` folder**, which includes all scripts needed to run the analyses. The scripts are organized in different subfolders for clarity:
 
-### `scripts/analysis`
-Contains scripts that perform all analyses:
-
+### `1. scripts/analysis`
 - **`scripts/analysis/1.only-cor`**  
   Computes correlation matrices using user-defined parameters and different analysis modes (across cells, across subjects, etc.)
   
@@ -38,10 +36,10 @@ Contains scripts that perform all analyses:
 - **`scripts/analysis/8.plusModalities`**  
   Integrates additional data modalities (e.g., binding evidence) into coexpression analyses
 
-### `scripts/data-wrangling`
+### `2. scripts/data-wrangling`
 Contains scripts for wrangling large-scale human brain single-cell datasets into a unified format for downstream analysis.
 
-### `scripts/functions`
+### `3. scripts/functions`
 Contains utility functions that are sourced in scripts across the `analysis` folder.
 
 ### Other Folders
