@@ -63,6 +63,9 @@ sampled_patients = meta.groupby('disease')['patientID'].apply(
 # Subset the AnnData object
 adata_subset = adata[meta['patientID'].isin(sampled_patients)].copy()
 
+
+
+
 cor = compute_gene_correlation(
                 adata=adata_subset,
                 correlation_type= correlation_typeT,
@@ -102,6 +105,10 @@ python run_compute_cor-disease.py \
 
 #### testing rank function ==========================
 from scipy.sparse import csr_matrix
+subset = adata[adata.obs['disease'] == "AD"]
+patient_matrix = subset[subset.obs['patientID'] == "11336574"].X
+
+
 adata_subset = adata[adata.obs["patientID"] == "41285665"]
 adata_subset.shape
 subset_data = adata_subset.X
@@ -122,3 +129,12 @@ edgeAD = pd.read_csv("/cosmos/data/project-data/NW-rewiring/coExpr/disease/edge-
 edgeCT = pd.read_csv('/cosmos/data/project-data/NW-rewiring/coExpr/disease/edge-list/Mic_Rexach-2024_CTL_corEdgeLists.csv', index_col=[0, 1])
 aggAD = ad.read_h5ad("/cosmos/data/project-data/NW-rewiring/coExpr/disease/agg-mtx/Mic_Rexach-2024_AD_corAggSparse.h5ad")
 aggCT = ad.read_h5ad("/cosmos/data/project-data/NW-rewiring/coExpr/disease/agg-mtx/Mic_Rexach-2024_CTL_corAggSparse.h5ad")
+
+
+input_dir = Path("/cosmos/data/project-data/NW-rewiring/data/2.prcsd-slcGenes-cpm/intrsct-lessStringent-diag-disease")
+
+
+files = []
+for file_path in input_dir.glob("Inh*.h5ad"):
+    print(file_path) 
+    files += file_path
