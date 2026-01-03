@@ -2,3 +2,7 @@
 *.ipynb_checkpoints
 /scripts/analysis/testing
 /scripts/functions/topCoExpr/scratch
+# Generated plots (do not share)
+plots/
+# Scratch analysis outputs
+scripts/analysis/1.only-cor/scratch/
