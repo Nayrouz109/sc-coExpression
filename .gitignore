@@ -6,3 +6,8 @@
 plots/
 # Scratch analysis outputs
 scripts/analysis/1.only-cor/scratch/
+
+# Ignore all corOnly_parallel versions
+scripts/functions/compute-cor/corOnly_parallel*.py
+# But keep V6 variants
+!scripts/functions/compute-cor/corOnly_parallelV6*.py
