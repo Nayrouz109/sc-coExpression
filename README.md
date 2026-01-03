@@ -17,16 +17,16 @@ The project develops a framework for large-scale sc RNA-seq integration spanning
 
 ---
 ### Where to find data and scripts 
-**data**:   /cosmos/data/project-data/NW-rewiring/data
-**coExpr matrices**: /cosmos/data/project-data/NW-rewiring/coExpr
-**script**: /home/nelazzabi/rewiring/scripts
+- **data**:   /cosmos/data/project-data/NW-rewiring/data
+- **coExpr matrices**: /cosmos/data/project-data/NW-rewiring/coExpr
+- **script**: /home/nelazzabi/rewiring/scripts
 
 
 ## Project Structure
 
-This repository contains the **`scripts` folder**, which includes all scripts needed to run the analyses. The scripts are organized in different subfolders for clarity:
+This repository contains the **`/scripts` folder**, which includes all scripts needed to run the analyses. The scripts are organized in different subfolders for clarity:
 
-### `analysis`
+### `scripts/analysis`
 Contains scripts that perform all analyses:
 
 - **`scripts/analysis/1.only-cor`**  
