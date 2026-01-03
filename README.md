@@ -29,19 +29,19 @@ This repository contains the **`scripts` folder**, which includes all scripts ne
 ### `analysis`
 Contains scripts that perform all analyses:
 
-- **`analysis/1.only-cor`**  
+- **`scripts/analysis/1.only-cor`**  
   Computes correlation matrices using user-defined parameters and different analysis modes (across cells, across subjects, etc.)
   
-- **`analysis/3.topCoExp/pipeline`**  
+- **`scripts/analysis/3.topCoExp/pipeline`**  
   Performs signal reproducibility benchmarking, cross-validation, and resampling analyses
 
-- **`analysis/8.plusModalities`**  
+- **`scripts/analysis/8.plusModalities`**  
   Integrates additional data modalities (e.g., binding evidence) into coexpression analyses
 
-### `data-wrangling`
+### `scripts/data-wrangling`
 Contains scripts for wrangling large-scale human brain single-cell datasets into a unified format for downstream analysis.
 
-### `functions`
+### `scripts/functions`
 Contains utility functions that are sourced in scripts across the `analysis` folder.
 
 ### Other Folders
