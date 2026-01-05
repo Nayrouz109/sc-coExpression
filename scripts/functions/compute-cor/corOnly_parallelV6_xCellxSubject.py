@@ -106,22 +106,22 @@ def compute_gene_correlation(adata,
     # Handle category logic
     if category in [None, "ALL", "None", "none", ""]:
         subset = adata
-        print("⚙️ Using all cells (no disease filtering).")
+        print("Using all cells (no disease filtering).")
         category_label = "ALL"
     else:
-        print(f"⚙️ Subsetting for category: {category}")
+        print(f"Subsetting for category: {category}")
         subset = adata[adata.obs['disease'] == category].copy()
         category_label = category
 
     if subset.shape[0] == 0:
-        print(f"⚠️ No cells found for category '{category_label}'. Skipping.")
+        print(f"No cells found for category '{category_label}'. Skipping.")
         return
 
     gene_names = subset.var_names
     aggregated_matrix = None
 
     if xCellxSubject:
-        print(f"🔹 Computing correlation across all patients for {category_label}")
+        print(f"Computing correlation across all patients for {category_label}")
 
         # Filter patients by min_cells_threshold
         patient_counts = subset.obs['patientID'].value_counts()
@@ -132,7 +132,7 @@ def compute_gene_correlation(adata,
         print(f"  Total cells after filtering: {filtered_subset.shape[0]}")
 
         if filtered_subset.shape[0] == 0:
-            print("⚠️ No patients with sufficient cells. Skipping correlation.")
+            print("No patients with sufficient cells. Skipping correlation.")
             aggregated_matrix = None
             patient_count = 0
         else:
@@ -155,7 +155,7 @@ def compute_gene_correlation(adata,
             patient_count = len(valid_patients)
 
     else:
-        print(f"🔹 Computing correlation per patient for {category_label}")
+        print(f"Computing correlation per patient for {category_label}")
         patient_ids = subset.obs['patientID'].unique()
         total_patients = len(patient_ids)
         print(f"  Total number of patients: {total_patients}")
@@ -173,11 +173,11 @@ def compute_gene_correlation(adata,
                 else:
                     aggregated_matrix.__iadd__(patient_matrix)
                 patient_count += 1
-                print(f"  ✅ Patient {patient_id} matrix aggregated.")
+                print(f"  Patient {patient_id} matrix aggregated.")
                 del patient_matrix
                 gc.collect()
             else:
-                print(f"  ⚠️ No valid matrix for patient {patient_id}.")
+                print(f"  No valid matrix for patient {patient_id}.")
 
         if aggregated_matrix is not None and patient_count > 0:
             aggregated_matrix = rank(aggregated_matrix)
@@ -204,14 +204,14 @@ def compute_gene_correlation(adata,
 
     # Log memory usage
     process = psutil.Process(os.getpid())
-    print(f"🧠 Memory usage before saving: {process.memory_info().rss / 1024 ** 2:.2f} MB")
+    print(f" Memory usage before saving: {process.memory_info().rss / 1024 ** 2:.2f} MB")
 
-    print(f"💾 Saving results for category: {category_label}")
+    print(f" Saving results for category: {category_label}")
     save_to_hdf5(category_data, output_dir, category_file_path)
-    print(f"✅ Results for {category_label} saved successfully to {category_file_path}.")
+    print(f" Results for {category_label} saved successfully to {category_file_path}.")
 
     # Clean up memory
     del subset, aggregated_matrix, aggregated_matrixEdge, category_data, summary_df
     gc.collect()
-    print(f"🧹 Memory usage after cleanup: {process.memory_info().rss / 1024 ** 2:.2f} MB")
+    print(f" Memory usage after cleanup: {process.memory_info().rss / 1024 ** 2:.2f} MB")
 
