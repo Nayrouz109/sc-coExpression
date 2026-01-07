@@ -151,3 +151,112 @@ def main(input_dir, output_dir, suffix=""):
             genes = adata.var_names
 
             # Convert to dense numpy array
+            print(" Converting to dense array...")
+            corr_values = (
+                corr_matrix.todense() if hasattr(corr_matrix, "todense") else corr_matrix
+            )
+            corr_values = np.asarray(corr_values)
+
+            # ---------------------------
+            # top1: top 1% edges genome-wide
+            # ---------------------------
+            top1_df = extract_top1_edges(corr_values, genes, ct, study)
+            if not top1_df.empty:
+                results.append(top1_df)
+                print(f" Added top1 edges for {ct}: {len(top1_df)} pairs")
+
+            # ---------------------------
+            # Random background sampling
+            # ---------------------------
+            n_genes = len(genes)
+            n_pairs = n_genes * (n_genes - 1) // 2
+            if n_pairs < 1000:
+                print(f" {ct} has too few gene pairs ({n_pairs}) for random sampling.")
+            else:
+                iu = np.triu_indices(n_genes, k=1)
+                random_idx = np.random.choice(len(iu[0]), size=1000, replace=False)
+
+                g1_idx = iu[0][random_idx]
+                g2_idx = iu[1][random_idx]
+
+                random_df = pd.DataFrame({
+                    "gene1": genes[g1_idx],
+                    "gene2": genes[g2_idx],
+                    "correlation": corr_values[g1_idx, g2_idx],
+                    "cell_type": ct,
+                    "gene_list": "background_random1000",
+                    "study": study
+                })
+                results.append(random_df)
+                print(f" Added 1000 random background pairs for {ct}")
+
+            # ---------------------------
+            # Loop over defined gene sets (SNAP, ribo)
+            # ---------------------------
+            corr_df = pd.DataFrame(corr_values, index=genes, columns=genes)
+
+            for gene_list_name, gene_list in gene_sets.items():
+                valid_genes = [g for g in gene_list if g in genes]
+                if len(valid_genes) < 2:
+                    print(f" Not enough valid genes from {gene_list_name} in {ct}")
+                    continue
+
+                df = (
+                    corr_df.loc[valid_genes, valid_genes]
+                    .stack()
+                    .reset_index()
+                    .rename(columns={"level_0": "gene1", "level_1": "gene2", 0: "correlation"})
+                    .assign(cell_type=ct, gene_list=gene_list_name, study=study)
+                )
+
+                # Remove self-correlations and duplicate pairs
+                df = df[df["gene1"] != df["gene2"]]
+                df["pair"] = df.apply(lambda x: tuple(sorted([x["gene1"], x["gene2"]])), axis=1)
+                df = df.drop_duplicates(subset=["cell_type", "pair"]).drop(columns="pair")
+
+                results.append(df)
+                print(f" Added {gene_list_name} pairs for {ct}: {len(df)}")
+
+        # ---------------------------
+        # Save combined results per study
+        # ---------------------------
+        if results:
+            combined_df = pd.concat(results, ignore_index=True)
+            filename = f"{study}_PEER4_top1_gene_correlations_with_background{suffix}.csv"
+            output_csv = os.path.join(output_dir, filename)
+            combined_df.to_csv(output_csv, index=False)
+            print(f" Saved results for {study} to:\n{output_csv}\n")
+        else:
+            print(f" No valid results for {study}")
+
+    print("\n Finished processing all studies successfully!\n")
+
+
+# -----------------------------------
+# CLI Entry Point
+# -----------------------------------
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Extract PEER4-related gene correlations.")
+    parser.add_argument("--input_dir", required=True, help="Path to input directory containing .h5ad files")
+    parser.add_argument("--output_dir", required=True, help="Path to save results")
+    parser.add_argument("--suffix", default="", help="Optional suffix to add to the output CSV filename")
+
+    args = parser.parse_args()
+    main(args.input_dir, args.output_dir, args.suffix)
+
+#python PEER4-genes.py \
+#  --input_dir /cosmos/data/project-data/NW-rewiring/coExpr/0all/agg-mtx \ 
+#  --output_dir /cosmos/data/project-data/NW-rewiring/coExpr/ling-PEER4 \ 
+#  --suffix _xCell
+
+
+#python PEER4-genes.py \
+#  --input_dir /cosmos/data/project-data/NW-rewiring/coExpr/xCellxSubject/agg-mtx \ 
+#  --output_dir /cosmos/data/project-data/NW-rewiring/coExpr/ling-PEER4 \ 
+#  --suffix _xCellxSubject
+
+
+#python PEER4-genes.py \
+#  --input_dir /cosmos/data/project-data/NW-rewiring/coExpr/xSubject/agg-mtx \ 
+#  --output_dir /cosmos/data/project-data/NW-rewiring/coExpr/ling-PEER4 \ 
+#  --suffix xSubject
